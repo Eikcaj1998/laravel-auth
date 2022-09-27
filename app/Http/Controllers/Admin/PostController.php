@@ -74,12 +74,18 @@ class PostController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  Post  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,Post $post )
     {
-        //
+        $data = $request->all();
+        $data['slug'] = Str::slug($data['titles'],'-');
+        $post->update($data);
+        $post->save();
+        return redirect()->route('admin.posts.show', $post)
+       ->with('message', 'Post modificato con successo')
+       ->with('type', 'success');
     }
 
     /**
