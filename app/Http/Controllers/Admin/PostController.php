@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Post;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\support\Str;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
@@ -16,7 +17,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::orderBy('updated_at','DESC')->orderBy('created_at','DESC')->get();
+        $posts = Post::orderBy('updated_at','DESC')
+        ->orderBy('created_at','DESC')
+        ->simplePaginate(10);
         return view('admin.posts.index', compact('posts'));
     }
 
@@ -92,7 +95,20 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request,Post $post )
-    {
+    {   
+        $request->validate([
+            'title' => ['required','string','min:5','max:50', Rule::unique('posts')->ignore($post->id)],
+            'content' => 'required|string',
+            'image' => 'nullable|url',
+        ],
+        [
+            'title.required'=>'il Titolo e obbligatorio',
+            'content.required'=>'il contenuto e obbligatorio',
+            'title.min'=>'il Titolo deve avere almeno :min caratteri',
+            'title.unique'=>"Esiste già un post dal titolo $request->title",
+            'image.url'=>'Url dell\'immagine non valida',
+        ]);
+
         $data = $request->all();
         $data['slug'] = Str::slug($data['titles'],'-');
         $post->update($data);
