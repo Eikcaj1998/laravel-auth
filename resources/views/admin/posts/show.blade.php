@@ -24,7 +24,11 @@
             <i class="fa-solid fa-rotate-left mr-2"></i> Indietro
         </a>
         <div class="d-flex align-items-center justify-content-end">
-            <form action="{{route('admin.posts.destroy',$post->id)}}" method="POST" class="delete-form">
+            <a class="btn mr-2 btn-warning p-1" href="{{ route('admin.posts.edit', $post) }}">
+                <i class="fa-solid fa-pencil mr-2"></i> Modifica
+            </a>
+
+            <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST" class="delete-form">
                 @csrf
                 @method('DELETE')
                 <button class="btn btn-danger" type="submit">

@@ -27,8 +27,11 @@
                     <th>{{ $post->created_at }}</th>
                     <th>{{ $post->updated_at }}</th>
                     <td class="d-flex justify-content-between">
-                      <a class="btn-btn-sm mr-2 btn-primary p-1" href="{{ route('admin.posts.show', $post) }}">
+                      <a class="btn btn-sm mr-2 btn-primary p-1" href="{{ route('admin.posts.show', $post) }}">
                         <i class="fa-solid fa-eye mr-2"></i> Vedi
+                      </a>
+                      <a class="btn btn-sm mr-2 btn-warning p-1" href="{{ route('admin.posts.edit', $post) }}">
+                        <i class="fa-solid fa-pencil mr-2"></i> Modifica
                       </a>
                       <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST" class="delete-form">
                           @csrf
