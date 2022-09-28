@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
+use App\Models\Category;
 use App\Models\Post;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -20,7 +20,8 @@ class PostController extends Controller
         $posts = Post::orderBy('updated_at','DESC')
         ->orderBy('created_at','DESC')
         ->simplePaginate(10);
-        return view('admin.posts.index', compact('posts'));
+        $categories = Category::all();
+        return view('admin.posts.index', compact('posts','categories'));
     }
 
     /**
@@ -31,7 +32,8 @@ class PostController extends Controller
     public function create()
     {   
         $post = new Post();
-        return view('admin.posts.create', compact('post'));
+        $categories = Category::select('id','label')->get();
+        return view('admin.posts.create', compact('post','categories'));
     }
     /**
      * Store a newly created resource in storage.
@@ -46,6 +48,7 @@ class PostController extends Controller
             'title' => 'required|string|min:5|max:50|unique:posts',
             'content' => 'required|string',
             'image' => 'nullable|url',
+            'category_id'=>'nullable|exists:categories,id'
         ],
         [
             'title.required'=>'il Titolo e obbligatorio',
@@ -53,6 +56,7 @@ class PostController extends Controller
             'title.min'=>'il Titolo deve avere almeno :min caratteri',
             'title.unique'=>"Esiste già un post dal titolo $request->title",
             'image.url'=>'Url dell\'immagine non valida',
+            'categy_id.exists'=>'Non esiste una categoria associabile',
         ]);
 
         $data = $request->all();
@@ -85,6 +89,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        $categories= Category::select('id','label')->get();
         return view('admin.posts.edit', compact('post'));
     }
 
@@ -101,6 +106,7 @@ class PostController extends Controller
             'title' => ['required','string','min:5','max:50', Rule::unique('posts')->ignore($post->id)],
             'content' => 'required|string',
             'image' => 'nullable|url',
+            'category_id'=> 'nullable|exists:categories,id'
         ],
         [
             'title.required'=>'il Titolo e obbligatorio',
@@ -108,6 +114,7 @@ class PostController extends Controller
             'title.min'=>'il Titolo deve avere almeno :min caratteri',
             'title.unique'=>"Esiste già un post dal titolo $request->title",
             'image.url'=>'Url dell\'immagine non valida',
+            'category_id'=>'Non esiste una categoria associabile'
         ]);
 
         $data = $request->all();
