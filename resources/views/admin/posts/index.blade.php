@@ -81,11 +81,11 @@
     <section class="m-5" id="category-posts">
         <h2 class="mb-2">Post By Category</h2>
         <div class="row">
-            @foreach ($gategories as $category)
+            @foreach ($categories as $category)
                 <div class="col-3">
                     <h3 class="my-3">{{$category->label}} ({{count($category->posts)}})</h3>
                         @forelse ($category->posts as $post)
-                            <p><a href="{{route('admin.posts.show',$post)}}"></a>{{$post->title}}</p>
+                            <p><a href="{{route('admin.posts.show',$post)}}">{{$post->title}}</a></p>
                         @empty
                            nessun post 
                         @endforelse

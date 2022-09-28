@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-use App\Models\Category;
-use App\Models\Post;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Models\Post;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -90,7 +90,7 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         $categories= Category::select('id','label')->get();
-        return view('admin.posts.edit', compact('post'));
+        return view('admin.posts.edit', compact('post','categories'));
     }
 
     /**
@@ -118,7 +118,7 @@ class PostController extends Controller
         ]);
 
         $data = $request->all();
-        $data['slug'] = Str::slug($data['titles'],'-');
+        $data['slug'] = Str::slug($data['title'],'-');
 
         $data['is_published'] = array_key_exists('is_published',$data);
 
