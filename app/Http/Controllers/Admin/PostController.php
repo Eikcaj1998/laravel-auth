@@ -59,6 +59,7 @@ class PostController extends Controller
         $post = new Post;
         $post->fill($data);
         $post->slug = Str::slug($post->title,'-');
+        $post->is_published = array_key_exists('is_published',$data);
         $post->save();
         return redirect()->route('admin.posts.show', $post)
        ->with('message', 'Post creato con successo')
@@ -111,6 +112,9 @@ class PostController extends Controller
 
         $data = $request->all();
         $data['slug'] = Str::slug($data['titles'],'-');
+
+        $data['is_published'] = array_key_exists('is_published',$data);
+
         $post->update($data);
         $post->save();
         return redirect()->route('admin.posts.show', $post)

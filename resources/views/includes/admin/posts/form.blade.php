@@ -55,6 +55,13 @@
             <img id="preview" src="{{$post->image ?? "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png"}}" 
             alt="post image preview" class="img-fluid">
         </div>
+        <div class="col-12">
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="is_published" name="is_published" value="1"
+                @if(old('is_published',$post->is_published)) checked @endif>
+                <label class="form-check-label" for="is_published">pubblicato</label>
+              </div>
+        </div>
     </div>
     <hr>
     <footer class="d-flex justify-content-between">
