@@ -1,10 +1,25 @@
+
 @extends('layouts.app')
+
 @section('content')
-    <header class="d-flex justify-content-between align-items-center mb-3">
-        <h1>Lista Posts</h1>
+    <header class="d-flex justify-content-between align-items-center">
+        <h1>Lista Post</h1>
         <a class="btn btn-success" href="{{ route('admin.posts.create') }}">
-            <i class="fa-solid fa-plus mr-2"></i> Nuovo Post
-        </a>
+            <i class="fa-solid fa-plus my-2"></i> Nuovo Post</a>
+        <form action='' method="">
+            <div class="input-group">
+                <select name="selected_category" class="custom-select">
+                    <option value="">Tutte le categorie</option>
+                    @foreach ($categories as $category)
+                        <option @if ($category->id == $selected_category) selected @endif value={{ $category->id }}>
+                            {{ $category->label }} </option>
+                    @endforeach
+                </select>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Filtra</button>
+                </div>
+            </div>
+        </form>
     </header>
 
     <table class="table table-striped table-dark">
