@@ -12,6 +12,7 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Titolo</th>
+                <th scope="col">Autore</th>
                 <th scope="col">Categoria</th>
                 <th scope="col">Stato</th>
                 <th scope="col">Creato il</th>
@@ -25,16 +26,23 @@
                     <th scope="row">{{ $post->id }}</th>
                     <td>{{ $post->title }}</td>
                     <td>
+                        @if ($post->author)
+                            {{ $post->author->name }}
+                        @else
+                            Anonimo
+                        @endif
+                    </td>
+                    <td>
                         @if ($post->category)
-                        <span class="badge badge-pill badge-{{$post->category->color ?? 'light'}}">
-                            {{$post->category->label}}
-                            @else 
+                            <span class="badge badge-pill badge-{{ $post->category->color ?? 'light' }}">
+                                {{ $post->category->label }}
+                            @else
                                 Nessuna
-                            @endif
+                        @endif
                         </span>
                     </td>
                     <td>
-                        <form action="{{route('admin.posts.toggle', $post)}}" method='POST'>
+                        <form action="{{ route('admin.posts.toggle', $post) }}" method='POST'>
                             @csrf
                             @method('PATCH')
                             <button class="btn btn-outline type-submit">
@@ -49,24 +57,26 @@
                     <th>{{ $post->created_at }}</th>
                     <th>{{ $post->updated_at }}</th>
                     <td class="d-flex justify-content-between">
-                        <a class="btn btn-sm mr-2 btn-primary p-1" href="{{ route('admin.posts.show', $post) }}">
-                            <i class="fa-solid fa-eye mr-2"></i> Vedi
+                        <a class="btn btn-sm mr-2 btn-primary" href="{{ route('admin.posts.show', $post) }}">
+                            <i class="fa-solid fa-eye"></i> 
                         </a>
-                        <a class="btn btn-sm mr-2 btn-warning p-1" href="{{ route('admin.posts.edit', $post) }}">
-                            <i class="fa-solid fa-pencil mr-2"></i> Modifica
+                        @if($post->user_id === Auth::id())
+                        <a class="btn btn-sm mr-2 btn-warning" href="{{ route('admin.posts.edit', $post) }}">
+                            <i class="fa-solid fa-pencil"></i> 
                         </a>
                         <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST" class="delete-form">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-sm btn-danger" type="submit">
-                                <i class="fa-solid fa-trash mr-2"></i> Elimina
+                                <i class="fa-solid fa-trash"></i> 
                             </button>
                         </form>
+                        @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6">
+                    <td colspan="8">
                         <h3 class="text-center">Nessun Post</h3>
                     </td>
                 </tr>
@@ -83,12 +93,12 @@
         <div class="row">
             @foreach ($categories as $category)
                 <div class="col-3">
-                    <h3 class="my-3">{{$category->label}} ({{count($category->posts)}})</h3>
-                        @forelse ($category->posts as $post)
-                            <p><a href="{{route('admin.posts.show',$post)}}">{{$post->title}}</a></p>
-                        @empty
-                           nessun post 
-                        @endforelse
+                    <h3 class="my-3">{{ $category->label }} ({{ count($category->posts) }})</h3>
+                    @forelse ($category->posts as $post)
+                        <p><a href="{{ route('admin.posts.show', $post) }}">{{ $post->title }}</a></p>
+                    @empty
+                        nessun post
+                    @endforelse
                 </div>
             @endforeach
         </div>

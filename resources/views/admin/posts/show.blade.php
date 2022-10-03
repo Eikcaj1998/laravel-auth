@@ -1,3 +1,8 @@
+@php
+    $is_author = $post->user_id === Auth::id()
+@endphp
+
+
 @extends('layouts.app')
 @section('content')
     <header>
@@ -17,18 +22,29 @@
         </p>
         <p>{{ $post->content }}</p>
         <div>
-            <strong><time>Creato il: {{ $post->created_at }}</time></strong>
+            <strong>Creato il: <time>{{ $post->created_at }}</time></strong>
             <div>
 
-                <strong><time>Ultima modifica il: {{ $post->updated_at }}</time></strong>
+                <strong>Ultima modifica il: <time>{{ $post->updated_at }}</time></strong>
+            </div>
+
+            <div>
+
+                <strong>Autore <time>
+                    @if ($post->author)
+                    {{ $post->author->name }}
+                </time></strong>
+                @else Anonimo
+                @endif
             </div>
         </div>
     </div>
     <hr>
-    <footer class="d-flex align-items-center justify-content-between">
+    <footer class="d-flex align-items-center justify-content-{{$is_author ?  'between' : 'end'}}">
         <a href="{{ route('admin.posts.index') }}"class="btn btn-secondary">
             <i class="fa-solid fa-rotate-left mr-2"></i> Indietro
         </a>
+        @if($is_author)
         <div class="d-flex align-items-center justify-content-end">
             <a class="btn mr-2 btn-warning p-1" href="{{ route('admin.posts.edit', $post) }}">
                 <i class="fa-solid fa-pencil mr-2"></i> Modifica
@@ -42,5 +58,6 @@
                 </button>
             </form>
         </div>
+        @endif
     </footer>
 @endsection

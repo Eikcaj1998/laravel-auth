@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -54,6 +55,7 @@ class PostController extends Controller
             'title.required'=>'il Titolo e obbligatorio',
             'content.required'=>'il contenuto e obbligatorio',
             'title.min'=>'il Titolo deve avere almeno :min caratteri',
+            'title.max'=>'il Titolo deve avere almeno :max caratteri',
             'title.unique'=>"Esiste già un post dal titolo $request->title",
             'image.url'=>'Url dell\'immagine non valida',
             'categy_id.exists'=>'Non esiste una categoria associabile',
@@ -64,6 +66,9 @@ class PostController extends Controller
         $post->fill($data);
         $post->slug = Str::slug($post->title,'-');
         $post->is_published = array_key_exists('is_published',$data);
+        $current_user= Auth::user();
+        $post->user_id = $current_user->id;
+
         $post->save();
         return redirect()->route('admin.posts.show', $post)
        ->with('message', 'Post creato con successo')
@@ -89,6 +94,11 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        if ($post->user_id !== Auth::id()) {
+            return redirect()->route('admin.posts.index')
+            ->with('message', "Non sei autorizzato a modificare questo post")
+            ->with('type', "warning");
+        }
         $categories= Category::select('id','label')->get();
         return view('admin.posts.edit', compact('post','categories'));
     }
@@ -137,6 +147,13 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+
+        if(count($post->tags)) $post->tags()->detach();
+        if ($post->user_id !== Auth::id()) {
+            return redirect()->route('admin.posts.index')
+            ->with('message', "Non sei autorizzato ad eliminare questo post")
+            ->with('type', "warning");
+        }
        $post->delete();
        return redirect()->route('admin.posts.index')
        ->with('message', 'il post e stato eliminato con successo')
